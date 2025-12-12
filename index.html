@@ -30,6 +30,11 @@
       --radius2: 14px;
 
       --max: 1080px;
+
+      /* NEW: sidebar + ID photo sizing */
+      --sideWidth: 260px;     /* shrink left column */
+      --avatarW: 160px;       /* ID photo width */
+      --avatarH: 210px;       /* ID photo height (2:3-ish) */
     }
 
     *{ box-sizing:border-box; }
@@ -40,7 +45,6 @@
       color:var(--text);
       line-height:1.65;
       background:
-        /* slightly reduced saturation/opacity */
         radial-gradient(900px 520px at 12% 10%, rgba(251,146,60,.10), transparent 60%),
         radial-gradient(780px 480px at 90% 18%, rgba(245,158,11,.09), transparent 62%),
         radial-gradient(900px 520px at 50% 92%, rgba(251,146,60,.06), transparent 60%),
@@ -67,27 +71,31 @@
 
     .grid{
       display:grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: var(--sideWidth) 1fr; /* CHANGED: narrower sidebar */
       min-height: 520px;
     }
 
     /* left column */
     .side{
-      padding: 18px;
+      padding: 16px; /* slightly tighter */
       border-right: 1px solid rgba(11,18,32,.12);
       background:
         radial-gradient(520px 360px at 10% 0%, rgba(251,146,60,.10), transparent 60%),
         linear-gradient(180deg, rgba(255,255,255,.60), rgba(255,255,255,.38));
+      display:flex;              /* NEW */
+      flex-direction:column;     /* NEW */
+      align-items:center;        /* NEW: center the smaller photo */
     }
 
+    /* ID-photo sized avatar */
     .avatar{
-      border-radius: var(--radius);
+      width: var(--avatarW);     /* NEW */
+      height: var(--avatarH);    /* NEW */
+      border-radius: 14px;       /* a bit tighter like ID photo */
       border: 1px solid rgba(11,18,32,.14);
       background: rgba(255,255,255,.78);
       overflow:hidden;
-      aspect-ratio: 1 / 1;
-      display:grid;
-      place-items:center;
+      display:block;
       position:relative;
       box-shadow: 0 14px 30px rgba(11,18,32,.10);
     }
@@ -99,36 +107,18 @@
         radial-gradient(300px 240px at 20% 15%, rgba(245,158,11,.10), transparent 60%),
         radial-gradient(320px 260px at 85% 80%, rgba(251,146,60,.10), transparent 60%);
       pointer-events:none;
-    }
-    .avatarImg{
-      position: relative;
-      z-index: 1;          /* 保证在 .avatar::before 之上 */
-      width: 100%;
-      height: 100%;
-      object-fit: cover;   /* 裁切铺满 */
-      display: block;
-    }
-    .avatarInner{
-      position:relative;
-      width: 92%;
-      height: 92%;
-      border-radius: calc(var(--radius) - 6px);
-      border: 1px dashed rgba(11,18,32,.28);
-      display:grid;
-      place-items:center;
-      padding: 14px;
-      text-align:center;
-      color: var(--muted);
-      font-size: 13px;
-      background: rgba(255,255,255,.64);
+      z-index: 1;
     }
 
-    .avatarHint{ color: var(--muted); }
-    .avatarHint strong{
-      color: var(--text);
-      font-weight: 800;
-      display:block;
-      margin-bottom:6px;
+    .avatarImg{
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* CHANGED: keep the face a bit higher; tweak if needed */
+      object-position: 50% 35%;
+      display: block;
     }
 
     .profile{
@@ -137,7 +127,10 @@
       border-radius: var(--radius2);
       border: 1px solid rgba(11,18,32,.14);
       background: rgba(255,255,255,.70);
+      width: 100%;              /* NEW: fill the sidebar width */
+      max-width: calc(var(--sideWidth) - 32px); /* NEW: account for padding */
     }
+
     .name{
       font-size: 20px;
       font-weight: 850;
@@ -250,7 +243,7 @@
     .item .when{ color: var(--muted2); font-size: 12px; white-space:nowrap; }
     .item .desc{ color: var(--muted); font-size: 13px; margin-top: 4px; }
     .item .desc a{
-      color: #c2410c; /* deeper orange for links */
+      color: #c2410c;
       text-decoration: underline;
       text-underline-offset: 3px;
       text-decoration-color: rgba(251,146,60,.35);
@@ -265,8 +258,19 @@
     }
 
     @media (max-width: 900px){
+      :root{
+        --sideWidth: 100%;
+        --avatarW: 140px;
+        --avatarH: 184px;
+      }
       .grid{ grid-template-columns: 1fr; }
-      .side{ border-right: none; border-bottom: 1px solid rgba(11,18,32,.12); }
+      .side{
+        border-right: none;
+        border-bottom: 1px solid rgba(11,18,32,.12);
+      }
+      .profile{
+        max-width: 520px;
+      }
       .iconLinks{ justify-content:flex-start; }
     }
   </style>
@@ -278,9 +282,9 @@
       <div class="grid">
 
         <aside class="side" aria-label="Sidebar">
-        <div class="avatar" aria-label="Photo">
-          <img src="./me.jpg" alt="Portrait photo" class="avatarImg" />
-        </div>
+          <div class="avatar" aria-label="Photo">
+            <img src="./me.jpg" alt="Portrait photo" class="avatarImg" />
+          </div>
 
           <div class="profile">
             <p class="name">Xuanyao Jie</p>
@@ -328,7 +332,7 @@
               <div class="editable">
                 <p>
                   I am Xuanyao Jie, currently a master's student at Hohai University. I have the privilege of being supervised by
-<a href="https://zach82.github.io/" target="_blank" rel="noreferrer">Dr. Zaipeng Xie</a>. My primary research interests lie in transfer learning, with a specific focus on online fine-tuning and test-time adaptation for offline reinforcement learning, as well as federated learning.
+                  <a href="https://zach82.github.io/" target="_blank" rel="noreferrer">Dr. Zaipeng Xie</a>. My primary research interests lie in transfer learning, with a specific focus on online fine-tuning and test-time adaptation for offline reinforcement learning, as well as federated learning.
                 </p>
               </div>
             </section>
