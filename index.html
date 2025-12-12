@@ -1,19 +1,445 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>我的个人主页</title>
+  <meta name="color-scheme" content="dark" />
+  <title>Your Name | Academic Homepage</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:860px;margin:40px auto;padding:0 16px;line-height:1.6}
-    .card{border:1px solid #eee;border-radius:12px;padding:18px}
+    :root{
+      /* textured deep dark (not pure black) */
+      --bg0:#0b1020;
+      --bg1:#0c1730;
+      --bg2:#0a2230;
+
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.14);
+
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.56);
+
+      --accent:#7c5cff;
+      --accent2:#22d3ee;
+
+      --shadow: 0 18px 55px rgba(0,0,0,.38);
+      --radius: 18px;
+      --radius2: 14px;
+
+      --max: 1080px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      line-height:1.65;
+      background:
+        radial-gradient(900px 520px at 12% 10%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(780px 480px at 90% 18%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(900px 520px at 50% 92%, rgba(99,102,241,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 45%, var(--bg2));
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    a:hover{ opacity:.94; }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 26px 16px 64px;
+    }
+
+    .shell{
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 520px;
+    }
+
+    /* left column */
+    .side{
+      padding: 18px;
+      border-right: 1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(520px 360px at 10% 0%, rgba(124,92,255,.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+
+    .avatar{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+      aspect-ratio: 1 / 1;
+      display:grid;
+      place-items:center;
+      position:relative;
+      box-shadow: 0 14px 30px rgba(0,0,0,.28);
+    }
+
+    .avatar::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(300px 240px at 20% 15%, rgba(34,211,238,.18), transparent 60%),
+        radial-gradient(320px 260px at 85% 80%, rgba(124,92,255,.18), transparent 60%);
+      pointer-events:none;
+    }
+
+    .avatarInner{
+      position:relative;
+      width: 92%;
+      height: 92%;
+      border-radius: calc(var(--radius) - 6px);
+      border: 1px dashed rgba(255,255,255,.22);
+      display:grid;
+      place-items:center;
+      padding: 14px;
+      text-align:center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .avatarHint{
+      color: var(--muted);
+    }
+    .avatarHint strong{ color: var(--text); font-weight: 750; display:block; margin-bottom:6px; }
+
+    .profile{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: var(--radius2);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+    }
+    .name{
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0 0 4px;
+      letter-spacing: .2px;
+    }
+    .title{
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .mini{
+      display:grid;
+      gap:8px;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+    .mini a{
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(124,92,255,.55);
+    }
+
+    .iconLinks{
+      margin-top: 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .iconBtn{
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      display:grid;
+      place-items:center;
+      box-shadow: 0 10px 22px rgba(0,0,0,.22);
+    }
+    .iconBtn:focus-visible{
+      outline: 2px solid rgba(34,211,238,.55);
+      outline-offset: 2px;
+    }
+    .icon{
+      width: 22px;
+      height: 22px;
+      display:block;
+    }
+
+    /* right column */
+    .main{
+      padding: 20px;
+    }
+
+    .top{
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(800px 320px at 15% 0%, rgba(124,92,255,.16), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .top h1{
+      margin:0 0 6px;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing:.2px;
+    }
+    .top p{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .sections{
+      margin-top: 14px;
+      display:grid;
+      gap: 12px;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      padding: 16px;
+    }
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing:.2px;
+    }
+    .editable{
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* simple, editable lists */
+    ul.clean{
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display:grid;
+      gap:10px;
+    }
+    .item{
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+    }
+    .item .line1{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .item .what{ font-weight: 750; }
+    .item .when{ color: var(--muted2); font-size: 12px; white-space:nowrap; }
+    .item .desc{ color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    footer{
+      margin-top: 16px;
+      color: var(--muted2);
+      font-size: 12px;
+      text-align:center;
+      padding: 6px 0 0;
+    }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      .side{ border-right: none; border-bottom: 1px solid rgba(255,255,255,.12); }
+      .iconLinks{ justify-content:flex-start; }
+    }
   </style>
 </head>
+
 <body>
-  <h1>你好，我是XXX</h1>
-  <div class="card">
-    <p>这是我的 GitHub Pages 个人主页。</p>
-    <p><a href="https://github.com/你的用户名">我的 GitHub</a></p>
+  <div class="wrap">
+    <div class="shell">
+      <div class="grid">
+
+        <!-- LEFT: photo space + icon links -->
+        <aside class="side" aria-label="Sidebar">
+          <div class="avatar" aria-label="Photo placeholder">
+            <div class="avatarInner">
+              <div class="avatarHint">
+                <strong>Photo</strong>
+                Replace this block with your headshot.<br/>
+                (You can insert an <code>&lt;img&gt;</code> here.)
+              </div>
+            </div>
+          </div>
+
+          <div class="profile">
+            <p class="name">Your Name</p>
+            <p class="title">Ph.D. Student / Researcher · Your University</p>
+
+            <div class="mini">
+              <div>Email: <a href="mailto:you@example.com">you@example.com</a></div>
+              <div>Location: City, Country</div>
+              <div>Keywords: Topic A · Topic B · Topic C</div>
+            </div>
+
+            <!-- Two icon links (Google Scholar + GitHub) -->
+            <div class="iconLinks" aria-label="External profile links">
+              <!-- Google Scholar -->
+              <a class="iconBtn"
+                 href="https://scholar.google.com/citations?user=YOUR_ID"
+                 target="_blank" rel="noreferrer"
+                 aria-label="Google Scholar">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3 1.8 8.2 12 13.4 22.2 8.2 12 3Z" stroke="rgba(255,255,255,.92)" stroke-width="1.6" />
+                  <path d="M5.6 10.2v4.6c0 2.1 3 3.8 6.4 3.8s6.4-1.7 6.4-3.8v-4.6" stroke="rgba(34,211,238,.85)" stroke-width="1.6" />
+                  <path d="M22.2 8.2v6.2" stroke="rgba(255,255,255,.55)" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </a>
+
+              <!-- GitHub -->
+              <a class="iconBtn"
+                 href="https://github.com/YOUR_USERNAME"
+                 target="_blank" rel="noreferrer"
+                 aria-label="GitHub">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path fill="rgba(255,255,255,.92)" d="M12 2.4a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.8c-2.9.6-3.6-1.2-3.6-1.2-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1.8 1.9 2.9 1.4.1-.7.4-1.2.7-1.5-2.3-.3-4.7-1.1-4.7-5 0-1.1.4-2.1 1.1-2.8-.1-.3-.5-1.3.1-2.7 0 0 .9-.3 2.9 1.1.8-.2 1.7-.3 2.6-.3.9 0 1.8.1 2.6.3 2-1.4 2.9-1.1 2.9-1.1.6 1.4.2 2.4.1 2.7.7.7 1.1 1.7 1.1 2.8 0 3.9-2.4 4.7-4.7 5 .4.3.8 1 .8 2.1V21c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.4z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </aside>
+
+        <!-- RIGHT: editable sections -->
+        <main class="main" aria-label="Main content">
+          <section class="top" aria-label="Intro">
+            <h1>Academic Homepage</h1>
+            <p>
+              Edit the sections below. Links and photo can be updated anytime.
+            </p>
+          </section>
+
+          <div class="sections">
+            <!-- NEW: self-introduction space on the right -->
+            <section class="card" id="bio">
+              <h2>About Me</h2>
+              <div class="editable">
+                <p>
+                  Write your self-introduction here (editable). You can include your current position, research focus,
+                  collaboration interests, and a brief summary of your background.
+                </p>
+                <p>
+                  Optional: add a short sentence about what you are looking for (internships, Ph.D. opportunities, collaborations).
+                </p>
+              </div>
+            </section>
+
+            <section class="card" id="education">
+              <h2>Education Background</h2>
+              <div class="editable">
+                <ul class="clean">
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">University A — Ph.D. in XXXX</div>
+                      <div class="when">2023 — Present</div>
+                    </div>
+                    <div class="desc">Department, advisor, thesis topic (editable).</div>
+                  </li>
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">University B — B.S./M.S. in XXXX</div>
+                      <div class="when">2019 — 2023</div>
+                    </div>
+                    <div class="desc">Selected coursework / research experience (editable).</div>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="card" id="interests">
+              <h2>Research Interest</h2>
+              <div class="editable">
+                <ul class="clean">
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">Topic 1</div>
+                      <div class="when">—</div>
+                    </div>
+                    <div class="desc">One-line description (editable).</div>
+                  </li>
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">Topic 2</div>
+                      <div class="when">—</div>
+                    </div>
+                    <div class="desc">One-line description (editable).</div>
+                  </li>
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">Topic 3</div>
+                      <div class="when">—</div>
+                    </div>
+                    <div class="desc">One-line description (editable).</div>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="card" id="publications">
+              <h2>Publications</h2>
+              <div class="editable">
+                <ul class="clean">
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">Paper Title 1</div>
+                      <div class="when">2025</div>
+                    </div>
+                    <div class="desc">
+                      Authors. Venue.
+                      <a href="#" onclick="return false" style="text-decoration:underline; text-underline-offset:3px;">[Link placeholder]</a>
+                    </div>
+                  </li>
+
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">Paper Title 2</div>
+                      <div class="when">2024</div>
+                    </div>
+                    <div class="desc">
+                      Authors. Venue.
+                      <a href="#" onclick="return false" style="text-decoration:underline; text-underline-offset:3px;">[PDF/DOI/arXiv]</a>
+                    </div>
+                  </li>
+
+                  <li class="item">
+                    <div class="line1">
+                      <div class="what">Paper Title 3 (Preprint / Under Review)</div>
+                      <div class="when">2025</div>
+                    </div>
+                    <div class="desc">
+                      Authors. Status.
+                      <a href="#" onclick="return false" style="text-decoration:underline; text-underline-offset:3px;">[arXiv]</a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <footer>
+              © <span id="year"></span> Your Name · Hosted on GitHub Pages
+            </footer>
+          </div>
+        </main>
+
+      </div>
+    </div>
   </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
